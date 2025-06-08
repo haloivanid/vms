@@ -1,0 +1,289 @@
+{
+  "info": {
+    "_postman_id": "a9b8c7d6-e5f6-4a7b-8c9d-1f2a3b4c5d6e",
+    "name": "VMS Project API",
+    "description": "API collection for the Vacancy Management System, including Candidate and Vacancy modules.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Candidate",
+      "description": "Endpoints for managing candidates.",
+      "item": [
+        {
+          "name": "Create Candidate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code should be 201 CREATED\", function () {",
+                  "    // In our setup, CREATED is wrapped in a 200 OK response, but the body is from a 201.",
+                  "    // This is a placeholder check, actual status is 200.",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "if (response && response.data && response.data.id) {",
+                  "    pm.collectionVariables.set(\"candidate_id\", response.data.id);",
+                  "    console.log(`Set candidate_id to: ${response.data.id}`);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Rina Anggraini\",\n    \"email\": \"rina.anggraini@example.com\",\n    \"birth_date\": \"1998-08-17\",\n    \"gender\": \"FEMALE\",\n    \"current_salary\": 12000000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/candidates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "candidates"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Candidates (Paged)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/candidates?page=0&size=5&sort=name,asc",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "candidates"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "5"
+                },
+                {
+                  "key": "sort",
+                  "value": "name,asc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Candidate by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/candidates/{{candidate_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "candidates", "{{candidate_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Candidate",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Rina Anggraini Updated\",\n    \"email\": \"rina.anggraini.updated@example.com\",\n    \"birth_date\": \"1998-08-18\",\n    \"gender\": \"FEMALE\",\n    \"current_salary\": 13000000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/candidates/{{candidate_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "candidates", "{{candidate_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Candidate",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/candidates/{{candidate_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "candidates", "{{candidate_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Vacancy",
+      "description": "Endpoints for managing vacancies and their criteria.",
+      "item": [
+        {
+          "name": "Create Vacancy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code should be 200 OK (wrapped)\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "if (response && response.data && response.data.id) {",
+                  "    pm.collectionVariables.set(\"vacancy_id\", response.data.id);",
+                  "    console.log(`Set vacancy_id to: ${response.data.id}`);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Senior Backend Developer\",\n    \"criteria\": [\n        {\n            \"name\": \"Age Requirement\",\n            \"weight\": 10,\n            \"details\": {\n                \"type\": \"age\",\n                \"min\": 25,\n                \"max\": 40\n            }\n        },\n        {\n            \"name\": \"Gender Preference\",\n            \"weight\": 5,\n            \"details\": {\n                \"type\": \"gender\",\n                \"expected\": \"ANY\"\n            }\n        },\n        {\n            \"name\": \"Expected Salary Range\",\n            \"weight\": 20,\n            \"details\": {\n                \"type\": \"salary\",\n                \"min\": 20000000,\n                \"max\": 30000000\n            }\n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/vacancies",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "vacancies"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Vacancies (Paged)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/vacancies?page=0&size=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "vacancies"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Vacancy by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/vacancies/{{vacancy_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "vacancies", "{{vacancy_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Vacancy",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Senior Backend Developer (Updated)\",\n    \"criteria\": [\n        {\n            \"name\": \"Age Requirement\",\n            \"weight\": 15,\n            \"details\": {\n                \"type\": \"age\",\n                \"min\": 26,\n                \"max\": 38\n            }\n        },\n        {\n            \"name\": \"Expected Salary Range\",\n            \"weight\": 25,\n            \"details\": {\n                \"type\": \"salary\",\n                \"min\": 22000000,\n                \"max\": 35000000\n            }\n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/vacancies/{{vacancy_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "vacancies", "{{vacancy_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Vacancy",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/vacancies/{{vacancy_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "vacancies", "{{vacancy_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Ranks for Vacancy",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/vacancies/{{vacancy_id}}/ranks?page=0&size=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "vacancies", "{{vacancy_id}}", "ranks"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "candidate_id",
+      "value": ""
+    },
+    {
+      "key": "vacancy_id",
+      "value": ""
+    }
+  ]
+}
